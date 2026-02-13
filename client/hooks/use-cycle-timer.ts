@@ -68,6 +68,12 @@ export function useCycleTimer() {
   const lastSaveTimeRef = useRef(0)
   const SAVE_THROTTLE_MS = 1000 // Save at most once per second
   const initialStatusRef = useRef(state.status) // Store initial status for restoration
+  const stateRef = useRef(state) // Keep current state in ref for cleanup
+
+  // Update state ref whenever state changes
+  useEffect(() => {
+    stateRef.current = state
+  }, [state])
 
   const clearTimer = useCallback(() => {
     if (intervalRef.current) {
@@ -159,9 +165,9 @@ export function useCycleTimer() {
     return () => {
       clearTimer()
       // Always save state on unmount
-      saveTimerState(state)
+      saveTimerState(stateRef.current)
     }
-  }, [clearTimer, state])
+  }, [clearTimer])
 
   // Persist timer state to localStorage (throttled)
   useEffect(() => {
@@ -185,7 +191,8 @@ export function useCycleTimer() {
       }
       intervalRef.current = setInterval(tick, 1000)
     }
-  }, [tick])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const progress = state.timeRemaining / state.totalDuration
 

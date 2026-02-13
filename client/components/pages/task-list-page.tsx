@@ -2,10 +2,10 @@
 
 import { useState, useMemo } from "react"
 import { Plus, Search, SlidersHorizontal, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/atoms/button"
 import { useTaskContext } from "@/lib/task-context"
-import { TaskCard } from "@/components/task-card"
-import { AddTaskDialog } from "@/components/add-task-dialog"
+import { TaskCard } from "@/components/molecules/task-card"
+import { AddTaskDialog } from "@/components/organisms/add-task-dialog"
 import type { Priority, Label } from "@/lib/types"
 import { PRIORITY_CONFIG, LABEL_CONFIG } from "@/lib/types"
 

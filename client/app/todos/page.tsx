@@ -1,4 +1,4 @@
-import { DailyTodoPage } from "@/components/daily-todo-page"
+import { DailyTodoPage } from "@/components/pages/daily-todo-page"
 
 export default function Page() {
   return <DailyTodoPage />

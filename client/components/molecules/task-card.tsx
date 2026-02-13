@@ -1,7 +1,7 @@
 "use client"
 
 import { Play, Trash2, CheckCircle2, Clock } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/atoms/button"
 import { useTaskContext } from "@/lib/task-context"
 import type { Task } from "@/lib/types"
 import { PRIORITY_CONFIG, LABEL_CONFIG } from "@/lib/types"

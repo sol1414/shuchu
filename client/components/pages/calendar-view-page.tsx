@@ -9,7 +9,7 @@ import {
   TrendingUp,
   Clock,
 } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/atoms/button"
 import { useTaskContext } from "@/lib/task-context"
 import { LABEL_CONFIG, PRIORITY_CONFIG, formatDateKey } from "@/lib/types"
 

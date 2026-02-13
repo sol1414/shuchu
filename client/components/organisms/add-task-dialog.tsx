@@ -4,7 +4,7 @@ import React from "react"
 
 import { useState } from "react"
 import { Plus, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/atoms/button"
 import { useTaskContext } from "@/lib/task-context"
 import { PRIORITY_CONFIG, LABEL_CONFIG, todayKey } from "@/lib/types"
 import type { Priority, Label } from "@/lib/types"

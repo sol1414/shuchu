@@ -35,7 +35,7 @@ export function CycleTimer() {
       hasAutoStarted.current = true
       timer.start()
     }
-  }, [task, timer])
+  }, [task, timer.status, timer.start])
 
   // Reset auto-start flag when task changes
   useEffect(() => {
@@ -94,7 +94,13 @@ export function CycleTimer() {
   function handleBack() {
     timer.pause()
     timer.reset()
+    hasAutoStarted.current = true // Prevent auto-start after reset
     setActiveTimerTaskId(null)
+  }
+
+  function handleReset() {
+    timer.reset()
+    hasAutoStarted.current = true // Prevent auto-start after reset
   }
 
   function handleComplete() {
@@ -227,7 +233,7 @@ export function CycleTimer() {
         onStart={timer.start}
         onPause={timer.pause}
         onSkip={timer.skip}
-        onReset={timer.reset}
+        onReset={handleReset}
         onComplete={handleComplete}
       />
 

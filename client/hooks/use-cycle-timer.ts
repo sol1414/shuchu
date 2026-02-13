@@ -4,6 +4,7 @@ import { useState, useRef, useCallback, useEffect } from "react"
 
 const WORK_DURATION = 45 * 60 // 45 minutes in seconds
 const BREAK_DURATION = 15 * 60 // 15 minutes in seconds
+const TIMER_STATE_KEY = "cycle-timer-state"
 
 export type TimerPhase = "work" | "break"
 export type TimerStatus = "idle" | "running" | "paused"
@@ -16,16 +17,54 @@ interface CycleTimerState {
   totalDuration: number
 }
 
+function loadTimerState(): CycleTimerState | null {
+  if (typeof window === "undefined") return null
+  try {
+    const raw = localStorage.getItem(TIMER_STATE_KEY)
+    if (raw) {
+      return JSON.parse(raw) as CycleTimerState
+    }
+  } catch {
+    /* ignore */
+  }
+  return null
+}
+
+function saveTimerState(state: CycleTimerState) {
+  if (typeof window === "undefined") return
+  try {
+    localStorage.setItem(TIMER_STATE_KEY, JSON.stringify(state))
+  } catch {
+    /* ignore */
+  }
+}
+
+function clearTimerState() {
+  if (typeof window === "undefined") return
+  try {
+    localStorage.removeItem(TIMER_STATE_KEY)
+  } catch {
+    /* ignore */
+  }
+}
+
 export function useCycleTimer() {
-  const [state, setState] = useState<CycleTimerState>({
-    phase: "work",
-    status: "idle",
-    timeRemaining: WORK_DURATION,
-    completedCycles: 0,
-    totalDuration: WORK_DURATION,
+  const [state, setState] = useState<CycleTimerState>(() => {
+    const saved = loadTimerState()
+    if (saved) {
+      return saved
+    }
+    return {
+      phase: "work",
+      status: "idle",
+      timeRemaining: WORK_DURATION,
+      completedCycles: 0,
+      totalDuration: WORK_DURATION,
+    }
   })
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const hasRestoredTimerRef = useRef(false)
 
   const clearTimer = useCallback(() => {
     if (intervalRef.current) {
@@ -76,13 +115,15 @@ export function useCycleTimer() {
 
   const reset = useCallback(() => {
     clearTimer()
-    setState({
-      phase: "work",
-      status: "idle",
+    const newState = {
+      phase: "work" as TimerPhase,
+      status: "idle" as TimerStatus,
       timeRemaining: WORK_DURATION,
       completedCycles: 0,
       totalDuration: WORK_DURATION,
-    })
+    }
+    setState(newState)
+    clearTimerState()
   }, [clearTimer])
 
   const skip = useCallback(() => {
@@ -114,6 +155,21 @@ export function useCycleTimer() {
   useEffect(() => {
     return () => clearTimer()
   }, [clearTimer])
+
+  // Persist timer state to localStorage whenever it changes
+  useEffect(() => {
+    saveTimerState(state)
+  }, [state])
+
+  // Restore running timer on mount
+  useEffect(() => {
+    if (!hasRestoredTimerRef.current && state.status === "running") {
+      hasRestoredTimerRef.current = true
+      clearTimer()
+      intervalRef.current = setInterval(tick, 1000)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const progress = state.timeRemaining / state.totalDuration
 

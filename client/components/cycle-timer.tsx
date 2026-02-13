@@ -99,6 +99,8 @@ export function CycleTimer() {
 
   function handleComplete() {
     if (activeTimerTaskId) {
+      timer.pause()
+      timer.reset()
       completeTask(activeTimerTaskId)
     }
   }

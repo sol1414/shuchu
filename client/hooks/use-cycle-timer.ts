@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useCallback, useEffect } from "react"
+import { useState, useRef, useCallback, useEffect, useLayoutEffect } from "react"
 
 const WORK_DURATION = 45 * 60 // 45 minutes in seconds
 const BREAK_DURATION = 15 * 60 // 15 minutes in seconds
@@ -65,6 +65,9 @@ export function useCycleTimer() {
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const hasRestoredTimerRef = useRef(false)
+  const lastSaveTimeRef = useRef(0)
+  const SAVE_THROTTLE_MS = 1000 // Save at most once per second
+  const initialStatusRef = useRef(state.status) // Store initial status for restoration
 
   const clearTimer = useCallback(() => {
     if (intervalRef.current) {
@@ -153,23 +156,36 @@ export function useCycleTimer() {
 
   // Cleanup on unmount
   useEffect(() => {
-    return () => clearTimer()
-  }, [clearTimer])
+    return () => {
+      clearTimer()
+      // Always save state on unmount
+      saveTimerState(state)
+    }
+  }, [clearTimer, state])
 
-  // Persist timer state to localStorage whenever it changes
+  // Persist timer state to localStorage (throttled)
   useEffect(() => {
-    saveTimerState(state)
+    const now = Date.now()
+    const timeSinceLastSave = now - lastSaveTimeRef.current
+    
+    // Save immediately on status change (pause, start, reset) or phase change
+    // Otherwise throttle to reduce I/O
+    if (timeSinceLastSave >= SAVE_THROTTLE_MS) {
+      saveTimerState(state)
+      lastSaveTimeRef.current = now
+    }
   }, [state])
 
-  // Restore running timer on mount
-  useEffect(() => {
-    if (!hasRestoredTimerRef.current && state.status === "running") {
+  // Restore running timer on mount (using layoutEffect for synchronous execution)
+  useLayoutEffect(() => {
+    if (!hasRestoredTimerRef.current && initialStatusRef.current === "running") {
       hasRestoredTimerRef.current = true
-      clearTimer()
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
       intervalRef.current = setInterval(tick, 1000)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [tick])
 
   const progress = state.timeRemaining / state.totalDuration
 

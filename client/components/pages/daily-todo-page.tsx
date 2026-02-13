@@ -12,9 +12,9 @@ import {
   ListChecks,
   Flame,
 } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/atoms/button"
 import { useTaskContext } from "@/lib/task-context"
-import { AddTaskDialog } from "@/components/add-task-dialog"
+import { AddTaskDialog } from "@/components/organisms/add-task-dialog"
 import { PRIORITY_CONFIG, LABEL_CONFIG, formatDateKey } from "@/lib/types"
 import type { Label } from "@/lib/types"
 import { useRouter } from "next/navigation"

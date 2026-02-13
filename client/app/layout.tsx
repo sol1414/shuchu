@@ -2,7 +2,7 @@ import React from "react"
 import type { Metadata, Viewport } from "next"
 import { Inter, JetBrains_Mono } from "next/font/google"
 import { TaskProvider } from "@/lib/task-context"
-import { AppNav } from "@/components/app-nav"
+import { AppNav } from "@/components/organisms/app-nav"
 
 import "./globals.css"
 

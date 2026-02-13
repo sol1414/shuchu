@@ -1,4 +1,4 @@
-import { CycleTimer } from "@/components/cycle-timer"
+import { CycleTimer } from "@/components/pages/cycle-timer"
 
 export default function Page() {
   return <CycleTimer />

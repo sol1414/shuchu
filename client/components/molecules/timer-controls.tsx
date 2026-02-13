@@ -1,7 +1,7 @@
 "use client"
 
 import { Play, Pause, SkipForward, RotateCcw } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/atoms/button"
 
 interface TimerControlsProps {
   status: "idle" | "running" | "paused"

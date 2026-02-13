@@ -20,6 +20,7 @@ export function CycleTimer() {
     incrementPomodoro,
     setActiveTimerTaskId,
     mounted,
+    completeTask,
   } = useTaskContext()
 
   const task = activeTimerTaskId ? getTaskById(activeTimerTaskId) : undefined
@@ -94,6 +95,12 @@ export function CycleTimer() {
     timer.pause()
     timer.reset()
     setActiveTimerTaskId(null)
+  }
+
+  function handleComplete() {
+    if (activeTimerTaskId) {
+      completeTask(activeTimerTaskId)
+    }
   }
 
   // Wait for context to load from localStorage
@@ -219,6 +226,7 @@ export function CycleTimer() {
         onPause={timer.pause}
         onSkip={timer.skip}
         onReset={timer.reset}
+        onComplete={handleComplete}
       />
 
       {/* Pomodoro progress */}

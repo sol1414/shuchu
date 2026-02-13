@@ -1,6 +1,6 @@
 "use client"
 
-import { Play, Pause, SkipForward, RotateCcw } from "lucide-react"
+import { Play, Pause, SkipForward, RotateCcw, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface TimerControlsProps {
@@ -9,6 +9,7 @@ interface TimerControlsProps {
   onPause: () => void
   onSkip: () => void
   onReset: () => void
+  onComplete: () => void
 }
 
 export function TimerControls({
@@ -17,6 +18,7 @@ export function TimerControls({
   onPause,
   onSkip,
   onReset,
+  onComplete,
 }: TimerControlsProps) {
   return (
     <div className="flex items-center gap-3">
@@ -58,6 +60,16 @@ export function TimerControls({
         aria-label="Skip to next phase"
       >
         <SkipForward className="w-4 h-4" />
+      </Button>
+
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={onComplete}
+        className="rounded-full w-10 h-10 border-border/50 text-muted-foreground hover:text-primary hover:border-primary bg-transparent"
+        aria-label="Complete task"
+      >
+        <CheckCircle2 className="w-4 h-4" />
       </Button>
     </div>
   )
